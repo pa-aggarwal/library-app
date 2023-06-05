@@ -1,8 +1,29 @@
 // eslint-disable-next-line import/extensions
 import helpers from "./helpers.js";
 
+const constructors = (function constructors() {
+    const { checkInnerLengths, makeTableBody, makeTableHeader } = helpers;
 
-const constructors = function constructors() {
+    /**
+     * Create a new table object.
+     * @param {Array<string>} headerColumns
+     * @param {Array<Array>} rows
+     */
+    function Table(headerColumns, rows) {
+        if (!checkInnerLengths(rows, headerColumns.length)) {
+            throw new Error("Length of each row must equal length of headers.");
+        }
+        this.headerColumns = headerColumns;
+        this.rows = rows;
+    }
+
+    Table.prototype.getElement = function display() {
+        const myContainer = document.createElement("table");
+        const header = makeTableHeader(this.headerColumns);
+        const body = makeTableBody(this.rows);
+        myContainer.append(header, body);
+        return myContainer;
+    };
 
     /**
      * Initialize a new library object.
@@ -36,10 +57,17 @@ const constructors = function constructors() {
             bookProps.map((prop) => book.displayProp(prop))
         );
 
-        const table = new helpers.Table(headerColumns, rows);
+        const table = new Table(headerColumns, rows);
         this.container.appendChild(table.getElement());
     };
 
+    /**
+     * Create a new Book object.
+     * @param {string} title - The title of this book.
+     * @param {string} author - The author of this book.
+     * @param {number} numPages - The number of pages in this book.
+     * @param {boolean} isRead - True if this book has been read, else false.
+     */
     function Book(title, author, numPages, isRead) {
         this.title = title;
         this.author = author;
@@ -60,6 +88,6 @@ const constructors = function constructors() {
     };
 
     return { Library, Book };
-}();
+})();
 
 export default constructors;

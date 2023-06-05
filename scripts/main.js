@@ -2,9 +2,7 @@
 import constructors from "./constructors.js";
 import helpers from "./helpers.js";
 
-
 (function main() {
-
     const { Library, Book } = constructors;
     const { stringToProperCase: properCase } = helpers;
 
@@ -23,7 +21,7 @@ import helpers from "./helpers.js";
     const myLibrary = new Library([book1, book2], librarySection);
 
     myLibrary.addBook(book3);
-    myLibrary.displayBooks(librarySection);
+    myLibrary.displayBooks();
 
     const showModal = () => {
         modalContainer.classList.remove("hidden");
@@ -53,5 +51,4 @@ import helpers from "./helpers.js";
     closeBtn.addEventListener("click", hideModal);
     cancelBtn.addEventListener("click", cancelBookEntry);
     bookForm.addEventListener("submit", submitBookEntry);
-
 })();
