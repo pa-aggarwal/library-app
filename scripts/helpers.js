@@ -50,7 +50,14 @@ const helpers = function helpers() {
         return myContainer;
     };
 
-    return {Table};
+    function stringToProperCase(string) {
+        const pattern = /\b\w+/g;
+        return string.replace(pattern, (word) =>
+            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        );
+    }
+
+    return {Table, stringToProperCase};
 }();
 
 export default helpers;

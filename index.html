@@ -9,7 +9,39 @@
 </head>
 <body>
     <h1>My Library</h1>
+    <button id="book-btn">New Book</button>
     <section id="library"></section>
+    <div class="modal-container hidden">
+        <section class="modal">
+            <header class="modal-header">
+                <h2>Create Book In Library</h2>
+                <button type="button" id="close-btn">X</button>
+            </header>
+            <form action="" id="book-form" class="book-form">
+                <div class="form-section">
+                    <label for="book-title">Title</label>
+                    <input type="text" name="book-title" id="book-title" required>
+                </div>
+                <div class="form-section">
+                    <label for="book-author">Author</label>
+                    <input type="text" name="book-author" id="book-author" required>
+                </div>
+                <div class="form-section">
+                    <label for="book-pages">Pages</label>
+                    <input type="number" name="book-pages" id="book-pages" required>
+                </div>
+                <div class="form-section">
+                    <input type="checkbox" name="book-completion" id="book-completion">
+                    <label for="book-completion">Completed</label>
+                </div>
+                <div class="form-section">
+                    <button type="submit" id="submit-btn" class="form-btn">Add Book</button>
+                    <button type="button" id="cancel-btn" class="form-btn">Cancel</button>
+                </div>
+            </form>
+        </section>
+        <div class="overlay"></div>
+    </div>
     <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>

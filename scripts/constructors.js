@@ -7,18 +7,20 @@ const constructors = function constructors() {
     /**
      * Initialize a new library object.
      * @param {Array<Book>} books - Book instances in this library.
+     * @param {Element} container - The DOM element representing this library.
      */
-    function Library(books) {
+    function Library(books, container) {
         this.books = books;
+        this.container = container;
     }
 
     Library.prototype.addBook = function addBook(book) {
         this.books.push(book);
     };
 
-    Library.prototype.displayBooks = function displayBooks(container) {
-        while (container.firstChild) {
-            container.removeChild(container.lastChild);
+    Library.prototype.displayBooks = function displayBooks() {
+        while (this.container.firstChild) {
+            this.container.removeChild(this.container.lastChild);
         }
 
         const bookPropDisplayNames = {
@@ -35,7 +37,7 @@ const constructors = function constructors() {
         );
 
         const table = new helpers.Table(headerColumns, rows);
-        container.appendChild(table.getElement());
+        this.container.appendChild(table.getElement());
     };
 
     function Book(title, author, numPages, isRead) {
