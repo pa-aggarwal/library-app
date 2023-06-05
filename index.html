@@ -17,7 +17,7 @@
                 <h2>Create Book In Library</h2>
                 <button type="button" id="close-btn">X</button>
             </header>
-            <form action="" id="book-form" class="book-form">
+            <form action="javascript:void(0);" id="book-form" class="book-form">
                 <div class="form-section">
                     <label for="book-title">Title</label>
                     <input type="text" name="book-title" id="book-title" required>
@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-section">
                     <label for="book-pages">Pages</label>
-                    <input type="number" name="book-pages" id="book-pages" required>
+                    <input type="number" name="book-pages" id="book-pages" min="1" required>
                 </div>
                 <div class="form-section">
                     <input type="checkbox" name="book-completion" id="book-completion">

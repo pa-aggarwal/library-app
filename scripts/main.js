@@ -21,7 +21,7 @@ import helpers from "./helpers.js";
     const myLibrary = new Library([book1, book2], librarySection);
 
     myLibrary.addBook(book3);
-    myLibrary.displayBooks();
+    myLibrary.display();
 
     const showModal = () => {
         modalContainer.classList.remove("hidden");
@@ -44,7 +44,7 @@ import helpers from "./helpers.js";
         const isRead = bookForm.elements["book-completion"].checked;
         hideModal();
         myLibrary.addBook(new Book(title, author, pages, isRead));
-        myLibrary.displayBooks();
+        myLibrary.display();
     };
 
     bookBtn.addEventListener("click", showModal);
