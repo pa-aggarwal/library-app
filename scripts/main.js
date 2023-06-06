@@ -62,9 +62,20 @@ import helpers from "./helpers.js";
         myLibrary.display();
     };
 
+    const checkForBookStatusChange = (event) => {
+        const { target } = event;
+        if (!checkAncestorHasClass(target, "read-status-btn")) {
+            return;
+        }
+        const rowToUpdate = findAncestorElement(target, "tr");
+        const bookIndex = parseInt(rowToUpdate.dataset.indexNum, 10);
+        myLibrary.editBookStatus(bookIndex);
+    };
+
     bookBtn.addEventListener("click", showModal);
     closeBtn.addEventListener("click", hideModal);
     cancelBtn.addEventListener("click", resetFormAndHideModal);
     bookForm.addEventListener("submit", submitBookEntry);
     librarySection.addEventListener("click", checkForBookDelete);
+    librarySection.addEventListener("click", checkForBookStatusChange);
 })();

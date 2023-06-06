@@ -22,6 +22,12 @@ const helpers = (function helpers() {
         return parent || null;
     }
 
+    function clearNode(node) {
+        while (node.lastChild) {
+            node.removeChild(node.lastChild);
+        }
+    }
+
     function updateRowIndices(rows, startIndex) {
         rows.forEach((row, index) => {
             row.setAttribute("data-index-num", startIndex + index);
@@ -41,6 +47,7 @@ const helpers = (function helpers() {
         checkInnerLengths,
         checkAncestorHasClass,
         findAncestorElement,
+        clearNode,
         updateRowIndices,
         stringToProperCase,
     };

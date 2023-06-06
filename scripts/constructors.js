@@ -2,13 +2,13 @@
 import helpers from "./helpers.js";
 
 const constructors = (function constructors() {
-    const { checkInnerLengths, updateRowIndices } = helpers;
+    const { checkInnerLengths, updateRowIndices, clearNode } = helpers;
     const deleteBtnHTML = `<button class="delete-btn">Delete</button>`;
 
     /**
-     * Create a new table object.
-     * @param {Array<string>} headerColumns
-     * @param {Array<Array>} rows
+     * Object representation of a Table with titled columns and rows.
+     * @param {Array<string>} columnHeaders - Names or titles of the columns.
+     * @param {Array<Array>} rows - Rows with data that corresponds to columns.
      */
     function Table(columnHeaders, rows) {
         this.container = document.createElement("table");
@@ -72,6 +72,13 @@ const constructors = (function constructors() {
         updateRowIndices(nextRows, rowIndex);
     };
 
+    Table.prototype.updateCell = function updateCell(rIndex, cIndex, value) {
+        const row = this.tbody.children[rIndex];
+        const column = row.children[cIndex];
+        clearNode(column);
+        column.insertAdjacentHTML("beforeend", value);
+    };
+
     Table.prototype.display = function display() {
         this.container.appendChild(this.thead);
         this.container.appendChild(this.tbody);
@@ -90,7 +97,7 @@ const constructors = (function constructors() {
     }
 
     Library.prototype.bookInfoToDisplay = function propsToDisplay() {
-        return ["Title", "Author", "Number of Pages", "Read Status"];
+        return ["Title", "Author", "Number of Pages", "Status"];
     };
 
     Library.prototype.createTable = function createTable() {
@@ -114,10 +121,14 @@ const constructors = (function constructors() {
         this.table.removeRow(bookIndex);
     };
 
+    Library.prototype.editBookStatus = function editBookStatus(bookIndex) {
+        const book = this.books[bookIndex];
+        book.updateStatus();
+        this.table.updateCell(bookIndex, 3, book.displayStatus());
+    };
+
     Library.prototype.display = function display() {
-        while (this.container.lastChild) {
-            this.container.removeChild(this.container.lastChild);
-        }
+        clearNode(this.container);
         this.container.appendChild(this.table.display());
         return this.container;
     };
@@ -136,12 +147,32 @@ const constructors = (function constructors() {
         this.isRead = isRead;
     }
 
+    Book.prototype.updateStatus = function updateReadStatus() {
+        this.isRead = !this.isRead;
+    };
+
+    Book.prototype.displayStatus = function displayReadStatus() {
+        const label = document.createElement("label");
+        label.setAttribute("class", "read-status-btn");
+        const checkbox = document.createElement("input");
+        const checkboxText = document.createElement("span");
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.setAttribute("class", "toggle-read");
+        if (this.isRead) {
+            checkbox.setAttribute("checked", "");
+        }
+        checkboxText.textContent = this.isRead ? "Read" : "Not Read";
+        label.appendChild(checkbox);
+        label.appendChild(checkboxText);
+        return label.outerHTML;
+    };
+
     Book.prototype.displayProp = function displayProp(property) {
         return {
             Title: this.title,
             Author: this.author,
             "Number of Pages": this.numPages,
-            "Read Status": this.isRead ? "Finished" : "Not Read",
+            Status: this.displayStatus(),
         }[property];
     };
 
