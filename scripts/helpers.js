@@ -3,6 +3,31 @@ const helpers = (function helpers() {
         return array.every((innerArray) => innerArray.length === length);
     }
 
+    function checkAncestorHasClass(node, className) {
+        let elementToCheck = node;
+        while (elementToCheck) {
+            if (elementToCheck.classList.contains(className)) {
+                return true;
+            }
+            elementToCheck = elementToCheck.parentElement;
+        }
+        return false;
+    }
+
+    function findAncestorElement(node, elementName) {
+        let parent = node.parentElement;
+        while (parent && parent.nodeName !== elementName.toUpperCase()) {
+            parent = parent.parentElement;
+        }
+        return parent || null;
+    }
+
+    function updateRowIndices(rows, startIndex) {
+        rows.forEach((row, index) => {
+            row.setAttribute("data-index-num", startIndex + index);
+        });
+    }
+
     function stringToProperCase(string) {
         // Removes apostrophe from word boundaries
         const pattern = /\b(?<!('))\w+/g;
@@ -14,6 +39,9 @@ const helpers = (function helpers() {
 
     return {
         checkInnerLengths,
+        checkAncestorHasClass,
+        findAncestorElement,
+        updateRowIndices,
         stringToProperCase,
     };
 })();

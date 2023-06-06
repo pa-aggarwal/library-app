@@ -4,7 +4,11 @@ import helpers from "./helpers.js";
 
 (function main() {
     const { Library, Book } = constructors;
-    const { stringToProperCase: properCase } = helpers;
+    const {
+        stringToProperCase: properCase,
+        checkAncestorHasClass,
+        findAncestorElement,
+    } = helpers;
 
     const librarySection = document.querySelector("#library");
     const modalContainer = document.querySelector(".modal-container");
@@ -31,7 +35,7 @@ import helpers from "./helpers.js";
         modalContainer.classList.add("hidden");
     };
 
-    const cancelBookEntry = () => {
+    const resetFormAndHideModal = () => {
         bookForm.reset();
         hideModal();
     };
@@ -42,13 +46,25 @@ import helpers from "./helpers.js";
         const author = properCase(bookForm.elements["book-author"].value);
         const pages = parseInt(bookForm.elements["book-pages"].value, 10);
         const isRead = bookForm.elements["book-completion"].checked;
-        hideModal();
+        resetFormAndHideModal();
         myLibrary.addBook(new Book(title, author, pages, isRead));
+        myLibrary.display();
+    };
+
+    const checkForBookDelete = (event) => {
+        const { target } = event;
+        if (!checkAncestorHasClass(target, "delete-btn")) {
+            return;
+        }
+        const rowToDelete = findAncestorElement(target, "tr");
+        const bookIndex = parseInt(rowToDelete.dataset.indexNum, 10);
+        myLibrary.deleteBook(bookIndex);
         myLibrary.display();
     };
 
     bookBtn.addEventListener("click", showModal);
     closeBtn.addEventListener("click", hideModal);
-    cancelBtn.addEventListener("click", cancelBookEntry);
+    cancelBtn.addEventListener("click", resetFormAndHideModal);
     bookForm.addEventListener("submit", submitBookEntry);
+    librarySection.addEventListener("click", checkForBookDelete);
 })();

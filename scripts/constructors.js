@@ -2,7 +2,8 @@
 import helpers from "./helpers.js";
 
 const constructors = (function constructors() {
-    const { checkInnerLengths } = helpers;
+    const { checkInnerLengths, updateRowIndices } = helpers;
+    const deleteBtnHTML = `<button class="delete-btn">Delete</button>`;
 
     /**
      * Create a new table object.
@@ -41,10 +42,15 @@ const constructors = (function constructors() {
         });
     };
 
+    Table.prototype.rowSubset = function rowSubset(startIndex) {
+        return Array.from(this.tbody.children).slice(startIndex);
+    };
+
     Table.prototype.addRows = function addRows(rows) {
         if (!checkInnerLengths(rows, this.headLength())) {
             throw new Error("Length of each row must equal length of headers.");
         }
+        const startIndex = this.tbody.children.length;
         const fragment = new DocumentFragment();
         rows.forEach((row) => {
             const rowElement = document.createElement("tr");
@@ -55,6 +61,15 @@ const constructors = (function constructors() {
             fragment.appendChild(rowElement);
         });
         this.tbody.appendChild(fragment);
+        const insertedRows = this.rowSubset(startIndex);
+        updateRowIndices(insertedRows, startIndex);
+    };
+
+    Table.prototype.removeRow = function removeRow(rowIndex) {
+        const row = this.tbody.children[rowIndex];
+        const nextRows = this.rowSubset(rowIndex + 1);
+        this.tbody.removeChild(row);
+        updateRowIndices(nextRows, rowIndex);
     };
 
     Table.prototype.display = function display() {
@@ -71,7 +86,7 @@ const constructors = (function constructors() {
     function Library(books, container) {
         this.books = books;
         this.container = container;
-        this.table = this.createTable();
+        this.createTable();
     }
 
     Library.prototype.bookInfoToDisplay = function propsToDisplay() {
@@ -83,14 +98,20 @@ const constructors = (function constructors() {
         const rows = this.books.map((book) =>
             bookProps.map((prop) => book.displayProp(prop))
         );
-        return new Table(bookProps, rows);
+        this.table = new Table(bookProps, rows);
+        this.table.addColumn("Actions", deleteBtnHTML);
     };
 
     Library.prototype.addBook = function addBook(book) {
         const bookProps = this.bookInfoToDisplay();
         const row = bookProps.map((prop) => book.displayProp(prop));
+        row.push(deleteBtnHTML);
         this.table.addRows([row]);
         this.books.push(book);
+    };
+
+    Library.prototype.deleteBook = function deleteBook(bookIndex) {
+        this.table.removeRow(bookIndex);
     };
 
     Library.prototype.display = function display() {
