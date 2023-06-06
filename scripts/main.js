@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 import constructors from "./constructors.js";
 import helpers from "./helpers.js";
+import config from "./config.js";
 
 (function main() {
     const { Library, Book } = constructors;
@@ -9,13 +10,14 @@ import helpers from "./helpers.js";
         checkAncestorHasClass,
         findAncestorElement,
     } = helpers;
+    const { IDs, classes } = config.CSS;
 
-    const librarySection = document.querySelector("#library");
-    const modalContainer = document.querySelector(".modal-container");
-    const bookBtn = document.getElementById("book-btn");
-    const closeBtn = document.getElementById("close-btn");
-    const cancelBtn = document.getElementById("cancel-btn");
-    const bookForm = document.getElementById("book-form");
+    const librarySection = document.getElementById(IDs.library);
+    const modalContainer = document.querySelector(`.${classes.modalContainer}`);
+    const bookBtn = document.getElementById(IDs.addBookBtn);
+    const closeBtn = document.getElementById(IDs.closeBookBtn);
+    const cancelBtn = document.getElementById(IDs.cancelBtn);
+    const bookForm = document.getElementById(IDs.bookForm);
 
     // Manually add some books to view the display
     const book1 = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
@@ -28,11 +30,11 @@ import helpers from "./helpers.js";
     myLibrary.display();
 
     const showModal = () => {
-        modalContainer.classList.remove("hidden");
+        modalContainer.classList.remove(classes.hide);
     };
 
     const hideModal = () => {
-        modalContainer.classList.add("hidden");
+        modalContainer.classList.add(classes.hide);
     };
 
     const resetFormAndHideModal = () => {
@@ -53,7 +55,7 @@ import helpers from "./helpers.js";
 
     const checkForBookDelete = (event) => {
         const { target } = event;
-        if (!checkAncestorHasClass(target, "delete-btn")) {
+        if (!checkAncestorHasClass(target, classes.deleteBtn)) {
             return;
         }
         const rowToDelete = findAncestorElement(target, "tr");
@@ -64,7 +66,7 @@ import helpers from "./helpers.js";
 
     const checkForBookStatusChange = (event) => {
         const { target } = event;
-        if (!checkAncestorHasClass(target, "read-status-btn")) {
+        if (!checkAncestorHasClass(target, classes.readStatusBtn)) {
             return;
         }
         const rowToUpdate = findAncestorElement(target, "tr");

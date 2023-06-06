@@ -1,9 +1,13 @@
-// eslint-disable-next-line import/extensions
+/* eslint-disable import/extensions */
 import helpers from "./helpers.js";
+import config from "./config.js";
 
 const constructors = (function constructors() {
     const { checkInnerLengths, updateRowIndices, clearNode } = helpers;
-    const deleteBtnHTML = `<button class="delete-btn">Delete</button>`;
+    const { classes: styles } = config.CSS;
+    const { application } = config;
+
+    const deleteBtnHTML = `<button class="${styles.deleteBtn}">Delete</button>`;
 
     /**
      * Object representation of a Table with titled columns and rows.
@@ -96,21 +100,17 @@ const constructors = (function constructors() {
         this.createTable();
     }
 
-    Library.prototype.bookInfoToDisplay = function propsToDisplay() {
-        return ["Title", "Author", "Number of Pages", "Status"];
-    };
-
     Library.prototype.createTable = function createTable() {
-        const bookProps = this.bookInfoToDisplay();
+        const bookProps = application.tableColumns;
         const rows = this.books.map((book) =>
             bookProps.map((prop) => book.displayProp(prop))
         );
         this.table = new Table(bookProps, rows);
-        this.table.addColumn("Actions", deleteBtnHTML);
+        this.table.addColumn(application.actionsColumn, deleteBtnHTML);
     };
 
     Library.prototype.addBook = function addBook(book) {
-        const bookProps = this.bookInfoToDisplay();
+        const bookProps = application.tableColumns;
         const row = bookProps.map((prop) => book.displayProp(prop));
         row.push(deleteBtnHTML);
         this.table.addRows([row]);
@@ -153,11 +153,12 @@ const constructors = (function constructors() {
 
     Book.prototype.displayStatus = function displayReadStatus() {
         const label = document.createElement("label");
-        label.setAttribute("class", "read-status-btn");
+        label.setAttribute("class", styles.readStatusBtn);
         const checkbox = document.createElement("input");
         const checkboxText = document.createElement("span");
+        checkboxText.setAttribute("class", styles.readToggleText);
         checkbox.setAttribute("type", "checkbox");
-        checkbox.setAttribute("class", "toggle-read");
+        checkbox.setAttribute("class", styles.readToggle);
         if (this.isRead) {
             checkbox.setAttribute("checked", "");
         }
@@ -169,10 +170,10 @@ const constructors = (function constructors() {
 
     Book.prototype.displayProp = function displayProp(property) {
         return {
-            Title: this.title,
-            Author: this.author,
-            "Number of Pages": this.numPages,
-            Status: this.displayStatus(),
+            [application.tableColumns[0]]: this.title,
+            [application.tableColumns[1]]: this.author,
+            [application.tableColumns[2]]: this.numPages,
+            [application.tableColumns[3]]: this.displayStatus(),
         }[property];
     };
 
