@@ -10,14 +10,15 @@ const config = {
         classes: {
             modalContainer: "modal-container",
             hide: "hidden",
-            deleteBtn: "delete-btn",
-            readStatusBtn: "read-status-btn",
+            btn: "btn",
+            deleteBtn: "btn--delete",
+            readStatus: "read-status",
             readToggle: "toggle-read",
             readToggleText: "toggle-read-text",
         },
     },
     application: {
-        tableColumns: ["Title", "Author", "Number of Pages", "Status"],
+        tableColumns: ["Title", "Author", "Pages", "Status"],
         actionsColumn: "Actions",
     },
 };

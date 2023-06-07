@@ -7,7 +7,7 @@ const constructors = (function constructors() {
     const { classes: styles } = config.CSS;
     const { application } = config;
 
-    const deleteBtnHTML = `<button class="${styles.deleteBtn}">Delete</button>`;
+    const deleteBtnHTML = `<button class="${styles.btn} ${styles.deleteBtn}">Delete</button>`;
 
     /**
      * Object representation of a Table with titled columns and rows.
@@ -84,6 +84,7 @@ const constructors = (function constructors() {
     };
 
     Table.prototype.display = function display() {
+        this.thead.classList.add("title");
         this.container.appendChild(this.thead);
         this.container.appendChild(this.tbody);
         return this.container;
@@ -128,7 +129,9 @@ const constructors = (function constructors() {
     };
 
     Library.prototype.display = function display() {
-        clearNode(this.container);
+        if (this.container.contains(this.table.container)) {
+            this.container.removeChild(this.table.container);
+        }
         this.container.appendChild(this.table.display());
         return this.container;
     };
@@ -151,21 +154,13 @@ const constructors = (function constructors() {
         this.isRead = !this.isRead;
     };
 
-    Book.prototype.displayStatus = function displayReadStatus() {
-        const label = document.createElement("label");
-        label.setAttribute("class", styles.readStatusBtn);
-        const checkbox = document.createElement("input");
-        const checkboxText = document.createElement("span");
-        checkboxText.setAttribute("class", styles.readToggleText);
-        checkbox.setAttribute("type", "checkbox");
-        checkbox.setAttribute("class", styles.readToggle);
-        if (this.isRead) {
-            checkbox.setAttribute("checked", "");
-        }
-        checkboxText.textContent = this.isRead ? "Read" : "Not Read";
-        label.appendChild(checkbox);
-        label.appendChild(checkboxText);
-        return label.outerHTML;
+    Book.prototype.displayStatus = function displayStatus() {
+        const checkedAttr = this.isRead ? "checked" : "";
+        const checkboxText = this.isRead ? "Read" : "Not Read";
+        return `<label class="${styles.readStatus}">
+                <input type="checkbox" class="${styles.readToggle}" ${checkedAttr}>
+                <span class="${styles.btn} ${styles.readToggleText}">${checkboxText}</span>
+                </label>`;
     };
 
     Book.prototype.displayProp = function displayProp(property) {

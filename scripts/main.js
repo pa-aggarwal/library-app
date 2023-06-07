@@ -66,7 +66,7 @@ import config from "./config.js";
 
     const checkForBookStatusChange = (event) => {
         const { target } = event;
-        if (!checkAncestorHasClass(target, classes.readStatusBtn)) {
+        if (!checkAncestorHasClass(target, classes.readStatus)) {
             return;
         }
         const rowToUpdate = findAncestorElement(target, "tr");
