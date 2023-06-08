@@ -7,7 +7,10 @@ const constructors = (function constructors() {
     const { classes: styles } = config.CSS;
     const { application } = config;
 
-    const deleteBtnHTML = `<button class="${styles.btn} ${styles.deleteBtn}">Delete</button>`;
+    const deleteBtnHTML = `<button class="${styles.btn} ${styles.deleteBtn}">
+        <i class="fa-solid fa-trash"></i>
+        <span>Delete</span>
+        </button>`;
 
     /**
      * Object representation of a Table with titled columns and rows.
@@ -84,7 +87,7 @@ const constructors = (function constructors() {
     };
 
     Table.prototype.display = function display() {
-        this.thead.classList.add("title");
+        this.thead.classList.add(styles.titleText);
         this.container.appendChild(this.thead);
         this.container.appendChild(this.tbody);
         return this.container;

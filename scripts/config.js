@@ -11,10 +11,11 @@ const config = {
             modalContainer: "modal-container",
             hide: "hidden",
             btn: "btn",
-            deleteBtn: "btn--delete",
+            deleteBtn: "btn--danger",
             readStatus: "read-status",
             readToggle: "toggle-read",
             readToggleText: "toggle-read-text",
+            titleText: "title",
         },
     },
     application: {
