@@ -167,6 +167,10 @@ main {
     border-bottom-right-radius: var(--border-radius);
 }
 
+.library-section .action-btn:not(:last-of-type) {
+    margin-right: 1.5rem;
+}
+
 .toggle-read {
     display: none;
 }

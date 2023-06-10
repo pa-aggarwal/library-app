@@ -4,7 +4,7 @@ import helpers from "./helpers.js";
 import config from "./config.js";
 
 (function main() {
-    const { Library, Book } = constructors;
+    const { Library, Book, Modal } = constructors;
     const {
         stringToProperCase: properCase,
         checkAncestorHasClass,
@@ -17,6 +17,7 @@ import config from "./config.js";
     const bookBtn = document.getElementById(IDs.addBookBtn);
     const closeBtn = document.getElementById(IDs.closeBookBtn);
     const cancelBtn = document.getElementById(IDs.cancelBtn);
+    const submitBtn = document.getElementById(IDs.submitBtn);
     const bookForm = document.getElementById(IDs.bookForm);
 
     // Manually add some books to view the display
@@ -26,20 +27,14 @@ import config from "./config.js";
 
     const myLibrary = new Library([book1, book2], librarySection);
 
+    const modal = new Modal(modalContainer, bookForm, submitBtn);
+
     myLibrary.addBook(book3);
     myLibrary.display();
 
-    const showModal = () => {
-        modalContainer.classList.remove(classes.hide);
-    };
-
-    const hideModal = () => {
-        modalContainer.classList.add(classes.hide);
-    };
-
     const resetFormAndHideModal = () => {
-        bookForm.reset();
-        hideModal();
+        modal.resetForm();
+        modal.hide();
     };
 
     const submitBookEntry = (event) => {
@@ -48,8 +43,14 @@ import config from "./config.js";
         const author = properCase(bookForm.elements["book-author"].value);
         const pages = parseInt(bookForm.elements["book-pages"].value, 10);
         const isRead = bookForm.elements["book-completion"].checked;
+        const book = new Book(title, author, pages, isRead);
         resetFormAndHideModal();
-        myLibrary.addBook(new Book(title, author, pages, isRead));
+        if (submitBtn.hasAttribute("data-submit-edit")) {
+            const bookIndex = parseInt(submitBtn.dataset.bookIndex, 10);
+            myLibrary.editBook(bookIndex, book);
+        } else {
+            myLibrary.addBook(book);
+        }
         myLibrary.display();
     };
 
@@ -64,6 +65,17 @@ import config from "./config.js";
         myLibrary.display();
     };
 
+    const checkForBookEdit = (event) => {
+        const { target } = event;
+        if (!checkAncestorHasClass(target, classes.editBtn)) {
+            return;
+        }
+        const rowToUpdate = findAncestorElement(target, "tr");
+        const bookIndex = parseInt(rowToUpdate.dataset.indexNum, 10);
+        const book = myLibrary.getBook(bookIndex);
+        modal.showWithFilledForm(book, bookIndex);
+    };
+
     const checkForBookStatusChange = (event) => {
         const { target } = event;
         if (!checkAncestorHasClass(target, classes.readStatus)) {
@@ -74,10 +86,11 @@ import config from "./config.js";
         myLibrary.editBookStatus(bookIndex);
     };
 
-    bookBtn.addEventListener("click", showModal);
-    closeBtn.addEventListener("click", hideModal);
+    bookBtn.addEventListener("click", modal.showWithEmptyForm.bind(modal));
+    closeBtn.addEventListener("click", modal.hide.bind(modal));
     cancelBtn.addEventListener("click", resetFormAndHideModal);
     bookForm.addEventListener("submit", submitBookEntry);
     librarySection.addEventListener("click", checkForBookDelete);
+    librarySection.addEventListener("click", checkForBookEdit);
     librarySection.addEventListener("click", checkForBookStatusChange);
 })();

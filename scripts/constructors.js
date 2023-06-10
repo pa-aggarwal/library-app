@@ -7,9 +7,14 @@ const constructors = (function constructors() {
     const { classes: styles } = config.CSS;
     const { application } = config;
 
-    const deleteBtnHTML = `<button class="${styles.btn} ${styles.deleteBtn}">
+    const deleteBtnHTML = `<button class="${styles.btn} ${styles.deleteBtn} ${styles.actionBtn}">
         <i class="fa-solid fa-trash"></i>
         <span>Delete</span>
+        </button>`;
+
+    const editBtnHTML = `<button class="${styles.btn} ${styles.editBtn} ${styles.actionBtn}">
+        <i class="fa-regular fa-pen-to-square"></i>
+        <span>Edit</span>
         </button>`;
 
     /**
@@ -49,15 +54,12 @@ const constructors = (function constructors() {
         });
     };
 
-    Table.prototype.rowSubset = function rowSubset(startIndex) {
-        return Array.from(this.tbody.children).slice(startIndex);
+    Table.prototype.rowSubset = function rowSubset(startIndex, endIndex) {
+        const end = endIndex || this.tbody.children.length;
+        return Array.from(this.tbody.children).slice(startIndex, end);
     };
 
-    Table.prototype.addRows = function addRows(rows) {
-        if (!checkInnerLengths(rows, this.headLength())) {
-            throw new Error("Length of each row must equal length of headers.");
-        }
-        const startIndex = this.tbody.children.length;
+    Table.prototype.getRowFragment = function getRowFragment(rows) {
         const fragment = new DocumentFragment();
         rows.forEach((row) => {
             const rowElement = document.createElement("tr");
@@ -67,6 +69,15 @@ const constructors = (function constructors() {
             });
             fragment.appendChild(rowElement);
         });
+        return fragment;
+    };
+
+    Table.prototype.addRows = function addRows(rows) {
+        if (!checkInnerLengths(rows, this.headLength())) {
+            throw new Error("Length of each row must equal length of headers.");
+        }
+        const startIndex = this.tbody.children.length;
+        const fragment = this.getRowFragment(rows);
         this.tbody.appendChild(fragment);
         const insertedRows = this.rowSubset(startIndex);
         updateRowIndices(insertedRows, startIndex);
@@ -76,6 +87,13 @@ const constructors = (function constructors() {
         const row = this.tbody.children[rowIndex];
         const nextRows = this.rowSubset(rowIndex + 1);
         this.tbody.removeChild(row);
+        updateRowIndices(nextRows, rowIndex);
+    };
+
+    Table.prototype.editRow = function editRow(rowIndex, newRow) {
+        const oldRow = this.tbody.children[rowIndex];
+        this.tbody.replaceChild(this.getRowFragment([newRow]), oldRow);
+        const nextRows = this.rowSubset(rowIndex, rowIndex + 1);
         updateRowIndices(nextRows, rowIndex);
     };
 
@@ -110,19 +128,32 @@ const constructors = (function constructors() {
             bookProps.map((prop) => book.displayProp(prop))
         );
         this.table = new Table(bookProps, rows);
-        this.table.addColumn(application.actionsColumn, deleteBtnHTML);
+        const actionsColumnData = deleteBtnHTML + editBtnHTML;
+        this.table.addColumn(application.actionsColumn, actionsColumnData);
+    };
+
+    Library.prototype.getBook = function getBook(bookIndex) {
+        return this.books[bookIndex];
     };
 
     Library.prototype.addBook = function addBook(book) {
         const bookProps = application.tableColumns;
         const row = bookProps.map((prop) => book.displayProp(prop));
-        row.push(deleteBtnHTML);
+        row.push(deleteBtnHTML + editBtnHTML);
         this.table.addRows([row]);
         this.books.push(book);
     };
 
     Library.prototype.deleteBook = function deleteBook(bookIndex) {
         this.table.removeRow(bookIndex);
+    };
+
+    Library.prototype.editBook = function editBook(bookIndex, newBook) {
+        const bookProps = application.tableColumns;
+        const row = bookProps.map((prop) => newBook.displayProp(prop));
+        row.push(deleteBtnHTML + editBtnHTML);
+        this.table.editRow(bookIndex, row);
+        this.books[bookIndex] = newBook;
     };
 
     Library.prototype.editBookStatus = function editBookStatus(bookIndex) {
@@ -175,7 +206,55 @@ const constructors = (function constructors() {
         }[property];
     };
 
-    return { Library, Book };
+    /**
+     * Create a new Modal window to display.
+     * @param {Element} container - The DOM element representing this modal.
+     * @param {HTMLElement} form - The form element to show in this modal.
+     * @param {HTMLElement} submitBtn - The submit button element for the form.
+     */
+    function Modal(container, form, submitBtn) {
+        this.container = container;
+        this.form = form;
+        this.submitBtn = submitBtn;
+        this.heading = this.container.querySelector("h2");
+    }
+
+    Modal.prototype.show = function show() {
+        this.container.classList.remove(styles.hide);
+    };
+
+    Modal.prototype.hide = function hide() {
+        this.container.classList.add(styles.hide);
+    };
+
+    Modal.prototype.resetForm = function resetForm() {
+        this.form.reset();
+    };
+
+    Modal.prototype.showWithEmptyForm = function showWithEmptyForm() {
+        this.heading.textContent = "Add Book to Library";
+        this.submitBtn.innerHTML = `<i class="fa-light fa-plus"></i>Add Book`;
+        this.submitBtn.removeAttribute("data-submit-edit");
+        this.submitBtn.removeAttribute("data-book-index");
+        this.show();
+    };
+
+    Modal.prototype.showWithFilledForm = function showWithFilledForm(
+        book,
+        bookIndex
+    ) {
+        this.form.elements["book-title"].value = book.title;
+        this.form.elements["book-author"].value = book.author;
+        this.form.elements["book-pages"].value = book.numPages;
+        this.form.elements["book-completion"].checked = book.isRead;
+        this.heading.textContent = "Edit Book";
+        this.submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i>Save`;
+        this.submitBtn.setAttribute("data-submit-edit", "");
+        this.submitBtn.setAttribute("data-book-index", `${bookIndex}`);
+        this.show();
+    };
+
+    return { Library, Book, Modal };
 })();
 
 export default constructors;
