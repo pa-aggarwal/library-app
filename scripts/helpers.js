@@ -1,8 +1,4 @@
 const helpers = (function helpers() {
-    function checkInnerLengths(array, length) {
-        return array.every((innerArray) => innerArray.length === length);
-    }
-
     function checkAncestorHasClass(node, className) {
         let elementToCheck = node;
         while (elementToCheck) {
@@ -22,18 +18,6 @@ const helpers = (function helpers() {
         return parent || null;
     }
 
-    function clearNode(node) {
-        while (node.lastChild) {
-            node.removeChild(node.lastChild);
-        }
-    }
-
-    function updateRowIndices(rows, startIndex) {
-        rows.forEach((row, index) => {
-            row.setAttribute("data-index-num", startIndex + index);
-        });
-    }
-
     function stringToProperCase(string) {
         // Removes apostrophe from word boundaries
         const pattern = /\b(?<!('))\w+/g;
@@ -44,11 +28,8 @@ const helpers = (function helpers() {
     }
 
     return {
-        checkInnerLengths,
         checkAncestorHasClass,
         findAncestorElement,
-        clearNode,
-        updateRowIndices,
         stringToProperCase,
     };
 })();
