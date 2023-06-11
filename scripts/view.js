@@ -45,6 +45,11 @@ View.prototype.makeElement = function makeElement(tag, ...classes) {
     return element;
 };
 
+/**
+ * Return the HTML for a toggle switch that changes a book's read status.
+ * @param {boolean} isRead - Boolean indicating if a book has been read.
+ * @returns {string}
+ */
 View.prototype.getReadToggle = function getReadToggle(isRead) {
     const text = isRead ? "Read" : "Not Read";
     const checkedAttr = isRead ? "checked" : "";
@@ -54,6 +59,10 @@ View.prototype.getReadToggle = function getReadToggle(isRead) {
             </label>`;
 };
 
+/**
+ * Return the HTML for a delete button.
+ * @returns {string}
+ */
 View.prototype.getDeleteBtnHTML = function getDeleteBtnHTML() {
     return `<button class="btn btn--danger action-btn delete-btn">
                 <i class="fa-solid fa-trash"></i>
@@ -61,6 +70,10 @@ View.prototype.getDeleteBtnHTML = function getDeleteBtnHTML() {
             </button>`;
 };
 
+/**
+ * Return the HTML for an edit button.
+ * @returns {string}
+ */
 View.prototype.getEditBtnHTML = function getEditBtnHTML() {
     return `<button class="btn btn--primary action-btn edit-btn">
                 <i class="fa-regular fa-pen-to-square"></i>
@@ -121,6 +134,10 @@ View.prototype.displayLibraryAsTable = function makeTable(books) {
     return table;
 };
 
+/**
+ * Render a library's book collection.
+ * @param {Array<Book>} books - An array of Book instances to display.
+ */
 View.prototype.displayLibrary = function displayLibrary(books) {
     const oldTable = this.getElement(".library-table");
     if (oldTable) {
@@ -130,6 +147,7 @@ View.prototype.displayLibrary = function displayLibrary(books) {
     this.libraryRoot.appendChild(newTable);
 };
 
+/** Close and reset the modal to its initial "add book" state. */
 View.prototype.closeModal = function closeModal() {
     if (this.formInEditState) {
         this.modalInAddState();
@@ -139,10 +157,15 @@ View.prototype.closeModal = function closeModal() {
     this.modalRoot.classList.add("hidden");
 };
 
+/** Reveal the modal window. */
 View.prototype.showModal = function showModal() {
     this.modalRoot.classList.remove("hidden");
 };
 
+/**
+ * Fill out a form's inputs with the given values.
+ * @param {object} bookProps - Values to populate in the form's inputs.
+ */
 View.prototype.fillForm = function fillForm(bookProps) {
     const { title, author, pageCount, isRead } = bookProps;
     const formControls = this.bookForm.elements;
@@ -152,6 +175,10 @@ View.prototype.fillForm = function fillForm(bookProps) {
     formControls["book-completion"].checked = isRead;
 };
 
+/**
+ * Return an object with properties mapped to a form's input values.
+ * @returns {object} object with Book properties.
+ */
 View.prototype.getFormValues = function getFormValues() {
     const formControls = this.bookForm.elements;
     const title = properCase(formControls["book-title"].value);
@@ -161,28 +188,37 @@ View.prototype.getFormValues = function getFormValues() {
     return { title, author, pages, isRead };
 };
 
+/** Change text and HTML within a modal to indicate the add book state. */
 View.prototype.modalInAddState = function modalInAddState() {
     this.modalHeading.textContent = "Add Book to Library";
     this.submitBtn.innerHTML = `<i class="fa-light fa-plus"></i>Add Book`;
 };
 
+/** Change text and HTML within a modal to indicate the edit book state. */
 View.prototype.modalInEditState = function modalInEditState() {
     this.modalHeading.textContent = "Edit Book";
     this.submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i>Save`;
 };
 
+/** Show the modal if the add button is clicked. */
 View.prototype.listenToAddBtn = function listenToAddBtn() {
     this.addBookBtn.addEventListener("click", () => this.showModal());
 };
 
+/** Close the modal if the close button is clicked. */
 View.prototype.listenToCloseBtn = function listenToCloseBtn() {
     this.closeBtn.addEventListener("click", () => this.closeModal());
 };
 
+/** Close the modal if the cancel button is clicked. */
 View.prototype.listenToCancelBtn = function listenToCancelBtn() {
     this.cancelBtn.addEventListener("click", () => this.closeModal());
 };
 
+/**
+ * Notify the controller when a form is submitted to add a book.
+ * @param {Function} handler - Function to handle an add event.
+ */
 View.prototype.bindAddBook = function bindAddBook(handler) {
     this.bookForm.addEventListener("submit", () => {
         if (this.formInEditState) {
@@ -194,6 +230,10 @@ View.prototype.bindAddBook = function bindAddBook(handler) {
     });
 };
 
+/**
+ * Notify the controller when a delete button is clicked.
+ * @param {Function} handler - Function to handle a remove event.
+ */
 View.prototype.bindRemoveBook = function bindRemoveBook(handler) {
     this.libraryRoot.addEventListener("click", (event) => {
         if (!checkAncestorHasClass(event.target, "delete-btn")) {
@@ -205,6 +245,12 @@ View.prototype.bindRemoveBook = function bindRemoveBook(handler) {
     });
 };
 
+/**
+ * Notify the controller when an edit button is clicked.
+ * @param {object} handlers - Object with functions to handle get/update events.
+ * @param {Function} handlers.handleGet
+ * @param {Function} handlers.handleUpdate
+ */
 View.prototype.bindUpdateBook = function bindUpdateBook(handlers) {
     const { handleGet, handleUpdate } = handlers;
     let bookIndex;
@@ -231,6 +277,10 @@ View.prototype.bindUpdateBook = function bindUpdateBook(handlers) {
     });
 };
 
+/**
+ * Notify the controller when a book's read toggle is clicked.
+ * @param {Function} handler - Function to handle status change event.
+ */
 View.prototype.bindStatusChange = function bindStatusChange(handler) {
     this.libraryRoot.addEventListener("click", (event) => {
         if (!event.target.classList.contains("toggle-read-text")) {

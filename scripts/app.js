@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import { Library } from "./model.js";
+import Library from "./model.js";
 import View from "./view.js";
 import Controller from "./controller.js";
 

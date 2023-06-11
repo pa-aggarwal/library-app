@@ -98,4 +98,4 @@ Library.prototype.createBook = function createBook(bookProps) {
     return new Book(title, author, pages, isRead);
 };
 
-export { Book, Library };
+export default Library;
