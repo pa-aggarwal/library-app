@@ -56,16 +56,24 @@ Library.prototype.getBook = function getBook(index) {
 };
 
 /**
+ * Return a deep copy of the books in this library.
+ * @returns {Array<Book>}
+ */
+Library.prototype.getBooks = function getBooks() {
+    return structuredClone(this.books);
+};
+
+/**
  * Update the given properties of a book in this library.
  * @param {number} index - The index number of the book to change.
  * @param {object} bookProps - Updated property values.
  */
 Library.prototype.updateBook = function updateBook(index, bookProps) {
-    const { title, author, pages, isRead } = bookProps;
+    const { title, author, pageCount, isRead } = bookProps;
     const book = this.books[index];
     book.title = title;
     book.author = author;
-    book.pageCount = pages;
+    book.pageCount = pageCount;
     book.isRead = isRead;
     this.onBooksChanged(this.books);
 };
@@ -94,8 +102,8 @@ Library.prototype.updateBookStatus = function updateBookStatus(index) {
  * @returns {Book}
  */
 Library.prototype.createBook = function createBook(bookProps) {
-    const { title, author, pages, isRead } = bookProps;
-    return new Book(title, author, pages, isRead);
+    const { title, author, pageCount, isRead } = bookProps;
+    return new Book(title, author, pageCount, isRead);
 };
 
 export default Library;

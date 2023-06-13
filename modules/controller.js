@@ -2,10 +2,12 @@
  * Create an MVC controller to link a library's model and view.
  * @param {Library} model - The object representing the library model.
  * @param {View} view - The view which displays the library.
+ * @param {AppStorage} appStorage - The object managing local storage.
  */
-function Controller(model, view) {
+function Controller(model, view, appStorage) {
     this.model = model;
     this.view = view;
+    this.appStorage = appStorage;
     this.model.bindBooksChanged(this.onLibraryChanged.bind(this));
     this.view.bindAddBook(this.handleAdd.bind(this));
     this.view.bindUpdateBook({
@@ -14,7 +16,7 @@ function Controller(model, view) {
     });
     this.view.bindRemoveBook(this.handleRemove.bind(this));
     this.view.bindStatusChange(this.handleStatusChange.bind(this));
-    this.onLibraryChanged(this.model.books);
+    this.setupStorage();
 }
 
 /**
@@ -25,6 +27,22 @@ Controller.prototype.onLibraryChanged = function onLibraryChanged(books) {
     this.view.displayLibrary(books);
 };
 
+/** Add initial data to local storage if it's empty, otherwise replace
+ * the model's data with what's inside local storage. */
+Controller.prototype.setupStorage = function setupStorage() {
+    if (!this.appStorage.hasInitialData()) {
+        this.appStorage.addInitialData(this.model);
+        this.onLibraryChanged(this.model.books);
+    } else {
+        this.model.books = [];
+        const booksProps = this.appStorage.getLocalData();
+        booksProps.forEach((bookProps) => {
+            const book = this.model.createBook(bookProps);
+            this.model.addBook(book);
+        });
+    }
+};
+
 /**
  * Notify the model to create and add a new book.
  * @param {object} bookProps - Book properties for the new book.
@@ -32,6 +50,7 @@ Controller.prototype.onLibraryChanged = function onLibraryChanged(books) {
 Controller.prototype.handleAdd = function handleAdd(bookProps) {
     const book = this.model.createBook(bookProps);
     this.model.addBook(book);
+    this.appStorage.updateData(this.model.getBooks());
 };
 
 /**
@@ -51,6 +70,7 @@ Controller.prototype.handleGet = function handleGet(index) {
  */
 Controller.prototype.handleUpdate = function handleUpdate(index, bookProps) {
     this.model.updateBook(index, bookProps);
+    this.appStorage.updateData(this.model.getBooks());
 };
 
 /**
@@ -59,6 +79,7 @@ Controller.prototype.handleUpdate = function handleUpdate(index, bookProps) {
  */
 Controller.prototype.handleRemove = function handleRemove(index) {
     this.model.removeBook(index);
+    this.appStorage.updateData(this.model.getBooks());
 };
 
 /**
@@ -67,6 +88,7 @@ Controller.prototype.handleRemove = function handleRemove(index) {
  */
 Controller.prototype.handleStatusChange = function handleStatusChange(index) {
     this.model.updateBookStatus(index);
+    this.appStorage.updateData(this.model.getBooks());
 };
 
 export default Controller;

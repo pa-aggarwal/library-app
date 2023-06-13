@@ -17,12 +17,12 @@ A simple library app that lets users keep track of which books they are reading.
 * Add button for adding a new book's information through a form
 * Edit button for updating a specific book's information
 * A book's read status can be changed by clicking the status button
+* User's books are stored in their browser if it supports local storage
 
 ### To Add/Implement
 
 Additional features that will help improve the user experience:
 
-- [ ] Add local storage to persist user's data after browser window closes
 - [ ] Make application responsive for other non-desktop devices like mobile/tablets
 - [ ] Indicate to the user when their library is empty
 - [ ] Make header navigation fixed at top of the page
@@ -35,3 +35,4 @@ Additional features that will help improve the user experience:
 * Manipulating the DOM in response to events on buttons and forms
 * Following the Model View Controller (MVC) design pattern to separate data from the user interface in the DOM
 * Documenting parameters and return types of functions and methods with [JSDoc](https://jsdoc.app/index.html)
+* How to use local storage to persist data after a browser window closes

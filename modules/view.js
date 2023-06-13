@@ -183,9 +183,9 @@ View.prototype.getFormValues = function getFormValues() {
     const formControls = this.bookForm.elements;
     const title = properCase(formControls["book-title"].value);
     const author = properCase(formControls["book-author"].value);
-    const pages = parseInt(formControls["book-pages"].value, 10);
+    const pageCount = parseInt(formControls["book-pages"].value, 10);
     const isRead = formControls["book-completion"].checked;
-    return { title, author, pages, isRead };
+    return { title, author, pageCount, isRead };
 };
 
 /** Change text and HTML within a modal to indicate the add book state. */
